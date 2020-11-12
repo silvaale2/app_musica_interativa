@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<!-- HTML 4 -->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<!-- HTML5 -->
+<meta charset="utf-8" />
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Websocket Player Interativo</title>
+    <style type="text/css">
+        body {
+            font-family: "Courier New", sans-serif;
+            text-align: center;
+        }
+
+        div {
+            margin-top: 20px;
+        }
+
+        .buttons {
+            font-size: 4em;
+            display: flex;
+            justify-content: center;
+        }
+
+        .button,
+        .value {
+            line-height: 1;
+            padding: 2rem;
+            margin: 2rem;
+            border: medium solid;
+            min-height: 1em;
+            min-width: 1em;
+        }
+
+        .button {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .play {
+            color: green;
+        }
+
+        .pause {
+            color: red;
+        }
+
+        .value {
+            min-width: 2em;
+        }
+
+        .state {
+            font-size: 2em;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            margin: 18px 0;
+            width: 50%;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 8.4px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            background: #3071a9;
+            border-radius: 1.3px;
+            border: 0.2px solid #010101;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            border: 1px solid #000000;
+            height: 36px;
+            width: 16px;
+            border-radius: 3px;
+            background: #ffffff;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -14px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #367ebd;
+        }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 8.4px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            background: #3071a9;
+            border-radius: 1.3px;
+            border: 0.2px solid #010101;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            border: 1px solid #000000;
+            height: 36px;
+            width: 16px;
+            border-radius: 3px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        input[type=range]::-ms-track {
+            width: 100%;
+            height: 8.4px;
+            cursor: pointer;
+            background: transparent;
+            border-color: transparent;
+            border-width: 16px 0;
+            color: transparent;
+        }
+
+        input[type=range]::-ms-fill-lower {
+            background: #2a6495;
+            border: 0.2px solid #010101;
+            border-radius: 2.6px;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        }
+
+        input[type=range]::-ms-fill-upper {
+            background: #3071a9;
+            border: 0.2px solid #010101;
+            border-radius: 2.6px;
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+        }
+
+        input[type=range]::-ms-thumb {
+            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+            border: 1px solid #000000;
+            height: 36px;
+            width: 16px;
+            border-radius: 3px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+
+        input[type=range]:focus::-ms-fill-lower {
+            background: #3071a9;
+        }
+
+        input[type=range]:focus::-ms-fill-upper {
+            background: #367ebd;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="buttons">
+        <div class="voltar button">
+            << </div>
+                <div class="play button"> > </div>
+                <div class="pause button"> || </div>
+                <div class="reiniciar button"> [] </div>
+                <div class="avancar button"> >> </div>
+        </div>
+
+
+        <div>
+            <input type="range" id="progBar" value="0">
+        </div>
+
+        <div style="display: block;">
+            <div id="ytplayer"></div>
+            <br />
+            <p>Tempo: <span id="contador"></span></p>
+        </div>
+
+        <script>
+            var newtime;
+            $('#progBar').on('mouseup touchend', function (e) {
+                newTime = player.getDuration() * (e.target.value / 100);
+                var obj = { "action": "progresso", "numero": newTime };
+                websocket.send(JSON.stringify(obj));
+            });
+            var output = document.getElementById("contador");
+
+        </script>
+        <div class="state">
+            <span class="users">?</span> online
+        </div>
+
+        <div id="video-placeholder"></div>
+
+        <div>
+            <b>Playlist</b>
+        </div>
+
+        <div>
+            <textarea disabled id="itensPlaylist" style="width: 550px; height: 70px;"></textarea>
+
+
+        </div>
+
+        <div>
+            <b>ID do vídeo do YT:</b> <input type=text id=p1 style="width: 100px;">
+            <button id=botaoMudarPlaylist onclick="mudaPlaylist();">Adicionar vídeo na Playlist</button>
+        </div>
+
+        <div>
+            <b>Chat</b>
+        </div>
+        <div>
+            <textarea disabled id="campoMensagemReceber" style="width: 550px; height: 70px;"></textarea>
+        </div>
+
+        <div>
+            <b>Nome:</b>
+            <input type=text id=nomeUsuario style="width: 100px;">
+            <b>Mensagem:</b>
+            <input type=text id=campoMensagemEnviar style="width: 200px;">
+            <button id=botaoEnviar onclick="enviarMensagem();">Enviar</button>
+        </div>
+
+
+
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        var videoIDs = [
+            '6LK5CZPDMfk',
+            'sx4BGbyWzQY',
+            'Yn53CGOZXRs',
+            '9v5w258KZuk'
+        ];
+        document.addEventListener('keypress', function (e) {
+            if (e.which == 13) {
+                $('#botaoEnviar').click();
+            }
+        }, false);
+
+
+        function mudaPlaylist() {
+            var obj = { "action": "atualizarPlaylist", "p1": document.getElementById("p1").value };
+            websocket.send(JSON.stringify(obj));
+        }
+
+        function enviarMensagem() {
+            if (document.getElementById("nomeUsuario").value == "")
+                alert("Escreva o nome do usuário.");
+            else {
+                var obj = { "action": "enviar", "texto": document.getElementById("nomeUsuario").value + ": " + document.getElementById("campoMensagemEnviar").value + "\n" };
+                websocket.send(JSON.stringify(obj));
+            }
+        }
+
+        ////////////////////////////////////////
+        ////API YOUTUBE
+        ////////////////////////////////////////
+        var player;
+        var currentVideoId = 0;
+
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('video-placeholder', {
+                width: 600,
+                height: 400,
+                playerVars: {
+                    playlist: '6LK5CZPDMfk, 7sbbb7Dt3D8, KS2oecN-aVU, 4jqH1rLAQuM',
+                    'controls': 0,
+                    'modestbranding': 1,
+                    'rel': 0,
+                    'showinfo': 0
+                },
+                events: {
+                    'onReady': initialize
+                }
+            });
+        }
+
+
+        function formatTime(time) {
+            time = Math.round(time);
+
+            var minutes = Math.floor(time / 60),
+                seconds = time - minutes * 60;
+
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            return minutes + ":" + seconds;
+        }
+
+
+        function updateProgressBar(event) {
+            $('#progBar').val((player.getCurrentTime() / player.getDuration()) * 100);
+            output.innerHTML = formatTime(player.getCurrentTime()) + "/" + formatTime(player.getDuration());
+        }
+
+
+        function initialize(event) {
+            currentVideoId = 0;
+
+            x = currentVideoId + 1;
+            document.getElementById("itensPlaylist").value = "Vídeos: " + videoIDs + "\n" + "Video Corrente: " + x +"/" +  videoIDs.length;
+
+            // Update the controls on load
+            updateProgressBar();
+
+            // Start interval to update elapsed time display and
+            // the elapsed part of the progress bar every second.
+            time_update_interval = setInterval(function () {
+                updateProgressBar();
+            }, 1000)
+
+        }
+
+
+        /////////////////////////////////////////
+        ////WEBSOCKETS
+        ////////////////////////////////////////
+
+        var play = document.querySelector('.play'),
+            pause = document.querySelector('.pause'),
+            users = document.querySelector('.users'),
+            avancar = document.querySelector('.avancar'),
+            voltar = document.querySelector('.voltar'),
+            reiniciar = document.querySelector('.reiniciar'),
+            enviar = document.querySelector('.enviar'),
+            websocket = new WebSocket("wss://alexandre.ufsj.edu.br:6789/");
+        play.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'play' }));
+
+        }
+        pause.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'pause' }));
+
+        }
+        voltar.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'voltar' }));
+            if (currentVideoId == 0) {
+
+            }
+            else {
+                var obj = { "action": "atualizaContador", "valorCorrente": --currentVideoId };
+                websocket.send(JSON.stringify(obj));
+            }
+        }
+        avancar.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'avancar' }));
+            if (currentVideoId < videoIDs.length - 1) {
+                var obj = { "action": "atualizaContador", "valorCorrente": ++currentVideoId };
+                websocket.send(JSON.stringify(obj));
+            }
+            else {
+
+            }
+
+        }
+        reiniciar.onclick = function (event) {
+            websocket.send(JSON.stringify({ action: 'reiniciar' }));
+
+        }
+
+        websocket.onmessage = function (event) {
+            data = JSON.parse(event.data);
+            switch (data.type) {
+                case 'state':
+                    if (data.value == "play") {
+                        player.playVideo();
+                    }
+                    else if (data.value == "pause") {
+                        player.pauseVideo();
+                    }
+                    else if (data.value == "avancar") {
+                        // player.nextVideo();
+                    }
+                    else if (data.value == "voltar") {
+                        //   player.previousVideo();
+                    }
+                    else if (data.value == "reiniciar") {
+                        player.seekTo(0);
+                        player.pauseVideo();
+                    }
+                    else if (data.value == "progresso") {
+                        player.seekTo(data.numero);
+                    }
+                    else if (data.value == "atualizaContador") {
+                        currentVideoId = data.valorCorrente;
+
+
+                        player.loadVideoById(videoIDs[data.valorCorrente]);
+                        x = currentVideoId + 1;
+                        document.getElementById("itensPlaylist").value = "Vídeos: " + videoIDs + "\n" + "Video Corrente: " + x +"/" +  videoIDs.length;
+
+                    }
+                    else if (data.value == "enviar") {
+                        document.getElementById("campoMensagemReceber").value = document.getElementById("campoMensagemReceber").value + data.texto;
+                    }
+                    else if (data.value == "atualizarPlaylist") {
+                        document.getElementById("p1").value = data.p1;
+                        videoIDs.push(document.getElementById("p1").value);
+
+                        player.loadPlaylist({
+                            playlist: videoIDs
+                        });
+
+                        player.loadVideoById(videoIDs[data.valorCorrente]);
+
+                        x = currentVideoId + 1;
+                        document.getElementById("itensPlaylist").value = "Vídeos: " + videoIDs + "\n" + "Video Corrente: " + x +"/" +  videoIDs.length;
+                    }
+                    break;
+                case 'users':
+                    users.textContent = (
+                        data.count.toString() + " usuário" +
+                        (data.count == 1 ? "" : "s"));
+                    break;
+                default:
+                    console.error(
+                        "unsupported event", data);
+            }
+        };
+    </script>
+</body>
+
+</html>
