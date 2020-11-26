@@ -23,14 +23,17 @@ def users_event():
     return json.dumps({"type": "users", "count": len(USERS)})
 
 
-async def notify_state():
-    if USERS:  # asyncio.wait doesn't accept an empty list
-        message = state_event()
-        await asyncio.wait([user.send(message) for user in USERS])
+async def notify_state():   # funcao notify_state
+    if USERS:  # 
+        message = state_event()  #pega o novo estado e grava na variavel message
+        await asyncio.wait([user.send(message) for user in USERS])  #envia mensagem para todos os usuário, fazendo um for de USERS, aqui tem que ficar de olho na funcao asyncio.wait, essa biblioteca que importamos asyncio ela é usada para programação concorrente, threads, etc,  acho que isso tem q ser explicado tb de forma mais técnica https://realpython.com/async-io-python/ , acho que ela faz alguma mágica aí pra manter a concorrência quando vai enviar o estado para todos os usuários, seria legal explicar isso tb.
+
+
+
 
 
 async def notify_users():
-    if USERS:  # asyncio.wait doesn't accept an empty list
+    if USERS:  # 
         message = users_event()
         await asyncio.wait([user.send(message) for user in USERS])
 
@@ -45,16 +48,15 @@ async def unregister(websocket):
     await notify_users()
 
 
-async def counter(websocket, path):
-    # register(websocket) sends user_event() to websocket
-    await register(websocket)
+async def counter(websocket, path):    
+    await register(websocket)  #quando usuários vão conectando, ele vai incrementando aqui
     try:
         await websocket.send(state_event())
-        async for message in websocket:
+        async for message in websocket:   #quando recebe mensagem, ele vai começar a fazer varias comparacoes abaixo, pra ver em qual condicional executa
             data = json.loads(message)
-            if data["action"] == "play":
-                STATE["value"] = "play"
-                await notify_state()
+            if data["action"] == "play":  #Se for play
+                STATE["value"] = "play"   #muda o estado no servidor
+                await notify_state()      #notifica todos os usuários passando a ação
             elif data["action"] == "pause":
                 STATE["value"] = "pause"
                 await notify_state()
