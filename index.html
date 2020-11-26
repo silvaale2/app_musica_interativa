@@ -8,151 +8,7 @@
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Websocket Player Interativo</title>
-    <style type="text/css">
-        body {
-            font-family: "Courier New", sans-serif;
-            text-align: center;
-        }
-
-        div {
-            margin-top: 20px;
-        }
-
-        .buttons {
-            font-size: 4em;
-            display: flex;
-            justify-content: center;
-        }
-
-        .button,
-        .value {
-            line-height: 1;
-            padding: 2rem;
-            margin: 2rem;
-            border: medium solid;
-            min-height: 1em;
-            min-width: 1em;
-        }
-
-        .button {
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .play {
-            color: green;
-        }
-
-        .pause {
-            color: red;
-        }
-
-        .value {
-            min-width: 2em;
-        }
-
-        .state {
-            font-size: 2em;
-        }
-
-        input[type=range] {
-            -webkit-appearance: none;
-            margin: 18px 0;
-            width: 50%;
-        }
-
-        input[type=range]:focus {
-            outline: none;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            width: 100%;
-            height: 8.4px;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            background: #3071a9;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
-
-        input[type=range]::-webkit-slider-thumb {
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            border: 1px solid #000000;
-            height: 36px;
-            width: 16px;
-            border-radius: 3px;
-            background: #ffffff;
-            cursor: pointer;
-            -webkit-appearance: none;
-            margin-top: -14px;
-        }
-
-        input[type=range]:focus::-webkit-slider-runnable-track {
-            background: #367ebd;
-        }
-
-        input[type=range]::-moz-range-track {
-            width: 100%;
-            height: 8.4px;
-            cursor: pointer;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            background: #3071a9;
-            border-radius: 1.3px;
-            border: 0.2px solid #010101;
-        }
-
-        input[type=range]::-moz-range-thumb {
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            border: 1px solid #000000;
-            height: 36px;
-            width: 16px;
-            border-radius: 3px;
-            background: #ffffff;
-            cursor: pointer;
-        }
-
-        input[type=range]::-ms-track {
-            width: 100%;
-            height: 8.4px;
-            cursor: pointer;
-            background: transparent;
-            border-color: transparent;
-            border-width: 16px 0;
-            color: transparent;
-        }
-
-        input[type=range]::-ms-fill-lower {
-            background: #2a6495;
-            border: 0.2px solid #010101;
-            border-radius: 2.6px;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-        }
-
-        input[type=range]::-ms-fill-upper {
-            background: #3071a9;
-            border: 0.2px solid #010101;
-            border-radius: 2.6px;
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-        }
-
-        input[type=range]::-ms-thumb {
-            box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-            border: 1px solid #000000;
-            height: 36px;
-            width: 16px;
-            border-radius: 3px;
-            background: #ffffff;
-            cursor: pointer;
-        }
-
-        input[type=range]:focus::-ms-fill-lower {
-            background: #3071a9;
-        }
-
-        input[type=range]:focus::-ms-fill-upper {
-            background: #367ebd;
-        }
-    </style>
+	<link rel="stylesheet" type="text/css" href="stylesheet.css" media="screen" />
 </head>
 
 <body>
@@ -184,8 +40,8 @@
                 websocket.send(JSON.stringify(obj));
             });
             var output = document.getElementById("contador");
-
         </script>
+		
         <div class="state">
             <span class="users">?</span> online
         </div>
@@ -198,8 +54,6 @@
 
         <div>
             <textarea disabled id="itensPlaylist" style="width: 550px; height: 70px;"></textarea>
-
-
         </div>
 
         <div>
@@ -221,9 +75,6 @@
             <input type=text id=campoMensagemEnviar style="width: 200px;">
             <button id=botaoEnviar onclick="enviarMensagem();">Enviar</button>
         </div>
-
-
-
     </div>
 
     <script src="https://www.youtube.com/iframe_api"></script>
@@ -235,12 +86,12 @@
             'Yn53CGOZXRs',
             '9v5w258KZuk'
         ];
+		
         document.addEventListener('keypress', function (e) {
             if (e.which == 13) {
                 $('#botaoEnviar').click();
             }
         }, false);
-
 
         function mudaPlaylist() {
             var obj = { "action": "atualizarPlaylist", "p1": document.getElementById("p1").value };
@@ -257,8 +108,9 @@
         }
 
         ////////////////////////////////////////
-        ////API YOUTUBE
+        /////////API YOUTUBE////////////////////
         ////////////////////////////////////////
+		
         var player;
         var currentVideoId = 0;
 
@@ -279,7 +131,6 @@
             });
         }
 
-
         function formatTime(time) {
             time = Math.round(time);
 
@@ -291,12 +142,10 @@
             return minutes + ":" + seconds;
         }
 
-
         function updateProgressBar(event) {
             $('#progBar').val((player.getCurrentTime() / player.getDuration()) * 100);
             output.innerHTML = formatTime(player.getCurrentTime()) + "/" + formatTime(player.getDuration());
         }
-
 
         function initialize(event) {
             currentVideoId = 0;
@@ -312,12 +161,11 @@
             time_update_interval = setInterval(function () {
                 updateProgressBar();
             }, 1000)
-
         }
 
 
-        /////////////////////////////////////////
-        ////WEBSOCKETS
+        ////////////////////////////////////////
+        //////////////WEBSOCKETS////////////////
         ////////////////////////////////////////
 
         var play = document.querySelector('.play'),
@@ -328,24 +176,26 @@
             reiniciar = document.querySelector('.reiniciar'),
             enviar = document.querySelector('.enviar'),
             websocket = new WebSocket("wss://alexandre.ufsj.edu.br:6789/");
-        play.onclick = function (event) {
-            websocket.send(JSON.stringify({ action: 'play' }));
-
+			
+        play.onclick = function (event) {  //se o botao PLAY for clicado (onclick)
+            websocket.send(JSON.stringify({ action: 'play' }));  //envia um JSON com um action com a informação: 'play' pro servidor websocket
         }
+		
         pause.onclick = function (event) {
             websocket.send(JSON.stringify({ action: 'pause' }));
-
         }
+		
         voltar.onclick = function (event) {
             websocket.send(JSON.stringify({ action: 'voltar' }));
             if (currentVideoId == 0) {
-
+			
             }
             else {
                 var obj = { "action": "atualizaContador", "valorCorrente": --currentVideoId };
                 websocket.send(JSON.stringify(obj));
             }
         }
+		
         avancar.onclick = function (event) {
             websocket.send(JSON.stringify({ action: 'avancar' }));
             if (currentVideoId < videoIDs.length - 1) {
@@ -357,17 +207,17 @@
             }
 
         }
+		
         reiniciar.onclick = function (event) {
             websocket.send(JSON.stringify({ action: 'reiniciar' }));
-
         }
 
-        websocket.onmessage = function (event) {
-            data = JSON.parse(event.data);
-            switch (data.type) {
+        websocket.onmessage = function (event) {  // a função websocket.onmessage pega o retorno do servidor, ou seja, as mensagens enviadas pelos clientes são recebidas nesta função
+            data = JSON.parse(event.data);  // pega a informação do json e armazena na variável data
+            switch (data.type) {  // dependendo do estado, vai cair em uma opcao do switch
                 case 'state':
-                    if (data.value == "play") {
-                        player.playVideo();
+                    if (data.value == "play") { //se for play 
+                        player.playVideo();  //executa a função de play (API do YouTube)
                     }
                     else if (data.value == "pause") {
                         player.pauseVideo();
@@ -388,11 +238,9 @@
                     else if (data.value == "atualizaContador") {
                         currentVideoId = data.valorCorrente;
 
-
                         player.loadVideoById(videoIDs[data.valorCorrente]);
                         x = currentVideoId + 1;
                         document.getElementById("itensPlaylist").value = "Vídeos: " + videoIDs + "\n" + "Video Corrente: " + x +"/" +  videoIDs.length;
-
                     }
                     else if (data.value == "enviar") {
                         document.getElementById("campoMensagemReceber").value = document.getElementById("campoMensagemReceber").value + data.texto;
